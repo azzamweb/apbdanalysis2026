@@ -1,0 +1,78 @@
+{
+    # Production configuration
+    auto_https off
+    servers {
+        metrics
+    }
+}
+
+# Production application
+:80 {
+    # Enable compression
+    encode gzip zstd
+    
+    # Security headers
+    header {
+        # Security headers
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        X-XSS-Protection "1; mode=block"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        Referrer-Policy strict-origin-when-cross-origin
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self';"
+        
+        # Remove server header
+        -Server
+    }
+    
+    # Root directory
+    root * /var/www/html/public
+    
+    # PHP handler
+    php_fastcgi unix//var/run/php/php-fpm.sock {
+        # PHP-FPM configuration
+        index index.php
+        try_files {path} {path}/ /index.php?{query}
+    }
+    
+    # Static files caching
+    @static {
+        path *.css *.js *.png *.jpg *.jpeg *.gif *.ico *.svg *.woff *.woff2 *.ttf *.eot
+    }
+    header @static Cache-Control "public, max-age=31536000, immutable"
+    
+    # API endpoints
+    @api {
+        path /api/*
+    }
+    header @api Cache-Control "no-cache, no-store, must-revalidate"
+    
+    # Logging
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+    
+    # Rate limiting
+    rate_limit {
+        zone static {
+            key {remote_host}
+            events 100
+            window 1m
+        }
+    }
+    
+    # Error handling
+    handle_errors {
+        @5xx {
+            expression {http.error.status_code} >= 500
+        }
+        rewrite @5xx /error.html
+        file_server
+    }
+}
+
+# Health check endpoint
+:80/health {
+    respond "OK" 200
+}

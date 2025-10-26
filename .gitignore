@@ -1,0 +1,106 @@
+# APBD Analysis 2026 - Git Ignore File
+
+# Dependencies
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Laravel specific
+bootstrap/compiled.php
+app/storage/
+public/storage
+public/hot
+public_html/storage
+public_html/hot
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.staging
+
+# Storage and cache
+storage/*.key
+storage/.DS_Store
+storage/framework/.DS_Store
+storage/logs/*.log
+storage/app/public/*
+!storage/app/public/.gitkeep
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# SSL Certificates
+docker/nginx/ssl/*.pem
+docker/nginx/ssl/*.key
+docker/nginx/ssl/*.crt
+
+# Backups
+backups/*
+!backups/.gitkeep
+
+# Uploads
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test files
+test_*.xlsx
+test_*.xls
+test_*.csv
+
+# PHPUnit
+.phpunit.result.cache
+coverage/
+
+# Composer
+composer.lock
+
+# NPM
+package-lock.json
+yarn.lock
+
+# Build artifacts
+dist/
+build/
+
+# Database
+*.sqlite
+*.db
+
+# Configuration overrides
+docker-compose.override.yml
+.env.override
+
+# Development tools
+.php_cs.cache
+.php-cs-fixer.cache
