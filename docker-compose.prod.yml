@@ -11,6 +11,7 @@ services:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
       - nginx_upload_temp:/tmp/nginx_upload
+      - ./.env:/var/www/html/.env:ro
     ports:
       - "5560:80"
       - "8443:443"
