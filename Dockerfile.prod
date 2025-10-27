@@ -49,11 +49,17 @@ RUN mkdir -p /var/log/supervisor /run/nginx /tmp/nginx_upload
 COPY . .
 
 # Install PHP dependencies and optimize
-RUN composer config --global process-timeout 300 \
-    && composer install --no-dev --optimize-autoloader --no-interaction
+# Set composer to use IPv4 and increase timeout to handle slow networks
+RUN composer config --global process-timeout 600 \
+    && composer config --global repo.packagist composer https://repo.packagist.org \
+    && composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
+    || (echo "Retrying composer install..." && sleep 5 && composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist)
 
 # Install Node dependencies and build assets
-RUN npm ci --only=production \
+# Increase npm timeout for slow networks
+RUN npm config set fetch-retry-mintimeout 20000 \
+    && npm config set fetch-retry-maxtimeout 120000 \
+    && npm ci --prefer-offline --no-audit \
     && npm run build \
     && rm -rf node_modules
 

@@ -83,10 +83,12 @@ test_*.csv
 coverage/
 
 # Composer
-composer.lock
+# Note: composer.lock SHOULD be committed for production deployments
+# composer.lock
 
 # NPM
-package-lock.json
+# Note: package-lock.json SHOULD be committed for production deployments
+# package-lock.json
 yarn.lock
 
 # Build artifacts
