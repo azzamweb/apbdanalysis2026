@@ -48,10 +48,17 @@ RUN mkdir -p /var/log/supervisor /run/nginx /tmp/nginx_upload
 # Copy application files
 COPY . .
 
-# Install dependencies and optimize
+# Install PHP dependencies and optimize
 RUN composer config --global process-timeout 300 \
-    && composer install --no-dev --optimize-autoloader --no-interaction \
-    && php artisan config:cache \
+    && composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install Node dependencies and build assets
+RUN npm ci --only=production \
+    && npm run build \
+    && rm -rf node_modules
+
+# Cache Laravel configuration and views
+RUN php artisan config:cache \
     && php artisan view:cache
 
 # Set permissions
