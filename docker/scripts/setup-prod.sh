@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HSAN Analysis Production Setup Script
+# APBD Analysis 2026 Production Setup Script
 # This script sets up the production environment
 
 set -e
 
-echo "🚀 Setting up HSAN Analysis Production Environment..."
+echo "🚀 Setting up APBD Analysis 2026 Production Environment..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -133,7 +133,7 @@ create_ssl_certificates() {
         openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
             -keyout docker/nginx/ssl/key.pem \
             -out docker/nginx/ssl/cert.pem \
-            -subj "/C=ID/ST=Jakarta/L=Jakarta/O=HSAN Analysis/OU=IT Department/CN=localhost"
+            -subj "/C=ID/ST=Jakarta/L=Jakarta/O=APBD Analysis 2026/OU=IT Department/CN=localhost"
         print_success "SSL certificates generated"
     else
         print_success "SSL certificates already exist"

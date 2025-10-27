@@ -25,8 +25,8 @@ The Docker setup includes:
 
 ```bash
 # Clone the repository
-git clone https://github.com/azzamweb/hsananalysis.git
-cd hsananalysis
+git clone https://github.com/azzamweb/apbdanalysis2026.git
+cd apbdanalysis2026
 
 # Run initial setup
 make setup
@@ -97,13 +97,13 @@ make clean      # Clean up containers and volumes
 ## 🌐 Service URLs
 
 ### Development
-- **Application**: http://localhost:8000
+- **Application**: http://localhost:5560
 - **phpMyAdmin**: http://localhost:8081
 - **Redis**: localhost:6380
 - **MariaDB**: localhost:3307
 
 ### Production
-- **Application**: http://localhost:8000 (or your domain)
+- **Application**: http://localhost:5560 (or your domain)
 - **phpMyAdmin**: Internal access only
 - **Redis**: Internal access only
 - **MariaDB**: Internal access only
@@ -119,15 +119,15 @@ The application uses the following environment variables:
 APP_NAME="HSAN Analysis"
 APP_ENV=local
 APP_DEBUG=true
-APP_URL=http://localhost:8000
+APP_URL=http://localhost:5560
 
 # Database
 DB_CONNECTION=mysql
 DB_HOST=mariadb
 DB_PORT=3306
-DB_DATABASE=hsananalysis
-DB_USERNAME=hsananalysis
-DB_PASSWORD=hsananalysis_password
+DB_DATABASE=apbdanalysis2026
+DB_USERNAME=apbdanalysis2026
+DB_PASSWORD=apbdanalysis2026_password
 
 # Redis
 REDIS_HOST=redis
@@ -150,11 +150,11 @@ QUEUE_CONNECTION=redis
 
 ### Accessing phpMyAdmin
 
-1. Open http://localhost:8081 (development) or http://localhost:8080 (production)
+1. Open http://localhost:5561 (development) or http://localhost:5561 (production)
 2. Use the following credentials:
    - **Server**: mariadb
-   - **Username**: hsananalysis
-   - **Password**: hsananalysis_password
+   - **Username**: apbdanalysis2026
+   - **Password**: apbdanalysis2026_password
 
 ### Database Backup
 
@@ -163,14 +163,14 @@ QUEUE_CONNECTION=redis
 make backup
 
 # Restore from backup
-make restore BACKUP_FILE=hsananalysis_db_20240101_120000.sql.gz
+make restore BACKUP_FILE=apbdanalysis2026_db_20240101_120000.sql.gz
 ```
 
 ## 🔧 Troubleshooting
 
 ### Common Issues
 
-1. **Port conflicts**: Make sure ports 8000, 8080, 3306, 6379 are not in use
+1. **Port conflicts**: Make sure ports 5560, 5561, 3306, 6379 are not in use
 2. **Permission issues**: Run `chmod +x docker/scripts/*.sh`
 3. **Container not starting**: Check logs with `make logs`
 
@@ -200,7 +200,7 @@ The Docker setup includes several performance optimizations:
 
 ### Health Checks
 
-- Application: http://localhost:8000/health
+- Application: http://localhost:5560/health
 - Database: Check via phpMyAdmin
 - Redis: Use `make redis-shell`
 

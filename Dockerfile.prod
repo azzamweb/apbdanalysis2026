@@ -15,10 +15,16 @@ RUN apk add --no-cache \
     gcc \
     g++ \
     make \
-    libzip-dev
+    libzip-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    nodejs \
+    npm
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql opcache zip
+# Configure and install GD extension
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql opcache zip gd
 
 # Install intl extension
 RUN apk add --no-cache icu-dev \

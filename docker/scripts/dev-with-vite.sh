@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# APBD Analysis 2026 Docker Development Script
-# This script starts the development environment
+# APBD Analysis 2026 Development Script with Vite
+# This script starts the development environment with Vite dev server
 
 set -e
 
@@ -29,7 +29,7 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-print_status "🚀 Starting APBD Analysis 2026 Development Environment..."
+print_status "🚀 Starting APBD Analysis 2026 Development Environment with Vite..."
 
 # Stop existing containers
 print_status "Stopping existing containers..."
@@ -55,20 +55,12 @@ docker-compose -f docker-compose.dev.yml exec app php artisan migrate --force
 print_status "Installing Composer dependencies..."
 docker-compose -f docker-compose.dev.yml exec app composer install
 
-# Install NPM dependencies (optional)
+# Install NPM dependencies
 print_status "Installing NPM dependencies..."
 if docker-compose -f docker-compose.dev.yml exec app npm install 2>/dev/null; then
     print_success "NPM dependencies installed successfully"
-    
-    # Build frontend assets for development
-    print_status "Building frontend assets..."
-    if docker-compose -f docker-compose.dev.yml exec app npm run dev 2>/dev/null; then
-        print_success "Frontend assets built successfully"
-    else
-        print_warning "Failed to build frontend assets, continuing..."
-    fi
 else
-    print_warning "NPM not available or failed to install dependencies, continuing..."
+    print_warning "Failed to install NPM dependencies, continuing..."
 fi
 
 # Set proper permissions
@@ -80,6 +72,7 @@ print_success "🎉 Development environment is ready!"
 print_status "Services available:"
 echo "🌐 Application: http://localhost:5560"
 echo "🗄️ phpMyAdmin: http://localhost:5561"
+echo "⚡ Vite Dev Server: http://localhost:5173"
 echo "📊 Redis: localhost:6380"
 echo "🗃️ MariaDB: localhost:3307"
 
@@ -88,3 +81,4 @@ echo "📝 View logs: docker-compose -f docker-compose.dev.yml logs -f"
 echo "🔧 Run artisan: docker-compose -f docker-compose.dev.yml exec app php artisan [command]"
 echo "📦 Install package: docker-compose -f docker-compose.dev.yml exec app composer require [package]"
 echo "🛑 Stop services: docker-compose -f docker-compose.dev.yml down"
+echo "🔄 Restart Vite: docker-compose -f docker-compose.dev.yml exec app npm run dev -- --host 0.0.0.0"

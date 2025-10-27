@@ -1,22 +1,22 @@
-# HSAN Analysis Docker Makefile
+# APBD Analysis 2026 Docker Makefile
 # This file provides convenient commands for Docker operations
 
 .PHONY: help setup dev prod stop clean logs shell db-shell redis-shell backup restore
 
 # Default target
 help: ## Show this help message
-	@echo "HSAN Analysis Docker Commands"
+	@echo "APBD Analysis 2026 Docker Commands"
 	@echo "=============================="
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Initial setup for the project
-	@echo "🚀 Setting up HSAN Analysis..."
+	@echo "🚀 Setting up APBD Analysis 2026..."
 	@chmod +x docker/scripts/setup.sh
 	@./docker/scripts/setup.sh
 
 setup-prod: ## Setup production environment
-	@echo "🚀 Setting up HSAN Analysis Production..."
+	@echo "🚀 Setting up APBD Analysis 2026 Production..."
 	@chmod +x docker/scripts/setup-prod.sh
 	@./docker/scripts/setup-prod.sh
 
@@ -24,6 +24,11 @@ dev: ## Start development environment
 	@echo "🚀 Starting development environment..."
 	@chmod +x docker/scripts/dev.sh
 	@./docker/scripts/dev.sh
+
+dev-vite: ## Start development environment with Vite
+	@echo "🚀 Starting development environment with Vite..."
+	@chmod +x docker/scripts/dev-with-vite.sh
+	@./docker/scripts/dev-with-vite.sh
 
 prod: ## Deploy to production
 	@echo "🚀 Deploying to production..."

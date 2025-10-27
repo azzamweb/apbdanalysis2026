@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   # PHP-FPM + Nginx Application (Production)
   app:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    container_name: hsananalysis_app_prod
+    container_name: apbdanalysis2026_app_prod
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -14,12 +12,12 @@ services:
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
       - nginx_upload_temp:/tmp/nginx_upload
     ports:
-      - "80:80"
-      - "443:443"
+      - "5560:80"
+      - "8443:443"
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
-      - APP_URL=${APP_URL:-http://localhost}
+      - APP_URL=${APP_URL:-http://localhost:5560}
       - DB_CONNECTION=mysql
       - DB_HOST=mariadb
       - DB_PORT=3306
@@ -41,12 +39,12 @@ services:
       timeout: 10s
       retries: 3
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
   # MariaDB Database (Production)
   mariadb:
     image: mariadb:10.11
-    container_name: hsananalysis_mariadb_prod
+    container_name: apbdanalysis2026_mariadb_prod
     restart: unless-stopped
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -58,19 +56,19 @@ services:
       - ./docker/mysql/my-prod.cnf:/etc/mysql/conf.d/my.cnf
       - ./docker/scripts/backup.sh:/docker-entrypoint-initdb.d/backup.sh
     ports:
-      - "3306:3306"
+      - "3307:3306"
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${DB_USERNAME}", "-p${DB_PASSWORD}"]
       interval: 30s
       timeout: 10s
       retries: 3
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
   # phpMyAdmin (Production)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: hsananalysis_phpmyadmin_prod
+    container_name: apbdanalysis2026_phpmyadmin_prod
     restart: unless-stopped
     environment:
       PMA_HOST: mariadb
@@ -81,39 +79,39 @@ services:
       PMA_ARBITRARY: 1
       PMA_ABSOLUTE_URI: ${PMA_URL:-http://localhost:8080}
     ports:
-      - "8080:80"
+      - "5561:80"
     depends_on:
       - mariadb
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
   # Redis (Production)
   redis:
     image: redis:7-alpine
-    container_name: hsananalysis_redis_prod
+    container_name: apbdanalysis2026_redis_prod
     restart: unless-stopped
     command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis_prod_data:/data
       - ./docker/redis/redis-prod.conf:/usr/local/etc/redis/redis.conf
     ports:
-      - "6379:6379"
+      - "6380:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
   # Nginx Reverse Proxy (Production)
   nginx:
     image: nginx:alpine
-    container_name: hsananalysis_nginx_prod
+    container_name: apbdanalysis2026_nginx_prod
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - "5560:80"
+      - "8443:443"
     volumes:
       - ./docker/nginx/nginx-proxy.conf:/etc/nginx/nginx.conf
       - ./docker/nginx/ssl:/etc/nginx/ssl
@@ -121,7 +119,7 @@ services:
     depends_on:
       - app
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
 # Docker Volumes
 volumes:
@@ -134,7 +132,7 @@ volumes:
 
 # Docker Networks
 networks:
-  hsananalysis_network:
+  apbdanalysis2026_network:
     driver: bridge
     ipam:
       config:

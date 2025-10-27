@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HSAN Analysis Production Deployment Script
+# APBD Analysis 2026 Production Deployment Script
 # This script handles the deployment of the application to production
 
 set -e
 
-echo "🚀 Starting HSAN Analysis Production Deployment..."
+echo "🚀 Starting APBD Analysis 2026 Production Deployment..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -56,7 +56,7 @@ if [ ! -f "docker/nginx/ssl/cert.pem" ] || [ ! -f "docker/nginx/ssl/key.pem" ]; 
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
         -keyout docker/nginx/ssl/key.pem \
         -out docker/nginx/ssl/cert.pem \
-        -subj "/C=ID/ST=Jakarta/L=Jakarta/O=HSAN Analysis/OU=IT Department/CN=localhost"
+        -subj "/C=ID/ST=Jakarta/L=Jakarta/O=APBD Analysis 2026/OU=IT Department/CN=localhost"
     print_success "Self-signed SSL certificates generated"
 fi
 
@@ -83,6 +83,19 @@ fi
 # Run database migrations
 print_status "Running database migrations..."
 docker-compose -f docker-compose.prod.yml exec -T app php artisan migrate --force
+
+# Install NPM dependencies and build assets
+print_status "Installing NPM dependencies and building assets..."
+if docker-compose -f docker-compose.prod.yml exec -T app npm install 2>/dev/null; then
+    print_status "Building production assets..."
+    if docker-compose -f docker-compose.prod.yml exec -T app npm run build 2>/dev/null; then
+        print_success "Production assets built successfully"
+    else
+        print_warning "Failed to build production assets, continuing..."
+    fi
+else
+    print_warning "NPM not available, skipping asset build..."
+fi
 
 # Clear and cache application
 print_status "Optimizing application..."
@@ -112,11 +125,11 @@ fi
 print_status "Deployment completed! Container status:"
 docker-compose -f docker-compose.prod.yml ps
 
-print_success "🎉 HSAN Analysis Production Deployment Completed!"
+print_success "🎉 APBD Analysis 2026 Production Deployment Completed!"
 print_status "Application is available at:"
 print_status "  - HTTP: http://localhost"
 print_status "  - HTTPS: https://localhost"
-print_status "  - phpMyAdmin: http://localhost:8080"
+print_status "  - phpMyAdmin: http://localhost:5561"
 print_status ""
 print_status "Useful commands:"
 print_status "  - View logs: make logs-prod"

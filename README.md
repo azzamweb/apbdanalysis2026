@@ -8,17 +8,20 @@ Aplikasi Laravel untuk pengolahan data APBD (Anggaran Pendapatan dan Belanja Dae
 
 ```bash
 # Clone repository
-git clone https://github.com/azzamweb/hsananalysis.git
-cd hsananalysis
+git clone https://github.com/azzamweb/apbdanalysis2026.git
+cd apbdanalysis2026
 
 # Setup development environment
 make setup
 
-# Start development server
+# Start development server (basic)
 make dev
 
+# Start development server with Vite (recommended)
+make dev-vite
+
 # Access application
-open http://localhost:8000
+open http://localhost:5560
 ```
 
 ### Production Environment
@@ -124,7 +127,7 @@ make restore          # Restore from backup
 
 ### Production
 - **Application**: https://localhost (or your domain)
-- **phpMyAdmin**: http://localhost:8080
+- **phpMyAdmin**: http://localhost:5561
 - **Database**: localhost:3306
 - **Redis**: localhost:6379
 
@@ -236,7 +239,7 @@ make restore BACKUP_FILE=hsananalysis_full_20240101_120000.tar.gz
 - **app**: PHP-FPM + Nginx (port 80/443)
 - **mariadb**: MariaDB database (port 3306)
 - **redis**: Redis cache (port 6379)
-- **phpmyadmin**: Database management (port 8080)
+- **phpmyadmin**: Database management (port 5561)
 - **nginx**: Reverse proxy with SSL
 
 ## 📝 Logs
@@ -325,7 +328,7 @@ make dev
 make migrate
 
 # Access application
-open http://localhost:8000
+open http://localhost:5560
 ```
 
 ### Production Deployment

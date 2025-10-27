@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HSAN Analysis Docker Setup Script
+# APBD Analysis 2026 Docker Setup Script
 # This script sets up the Docker environment for the application
 
 set -e
 
-echo "🚀 Setting up HSAN Analysis Docker Environment..."
+echo "🚀 Setting up APBD Analysis 2026 Docker Environment..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -77,5 +77,5 @@ print_status "Next steps:"
 echo "1. Run 'docker-compose up -d' to start the services"
 echo "2. Run 'docker-compose exec app php artisan key:generate' to generate app key"
 echo "3. Run 'docker-compose exec app php artisan migrate' to run migrations"
-echo "4. Access the application at http://localhost:8000"
-echo "5. Access phpMyAdmin at http://localhost:8080"
+echo "4. Access the application at http://localhost:5560"
+echo "5. Access phpMyAdmin at http://localhost:5561"

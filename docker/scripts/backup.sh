@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HSAN Analysis Backup Script
+# APBD Analysis 2026 Backup Script
 # This script creates backups of the database and application files
 
 set -e
 
-echo "🗄️ Starting HSAN Analysis Backup..."
+echo "🗄️ Starting APBD Analysis 2026 Backup..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -34,9 +34,9 @@ print_error() {
 # Configuration
 BACKUP_DIR="backups"
 DATE=$(date +"%Y%m%d_%H%M%S")
-DB_BACKUP_FILE="hsananalysis_db_${DATE}.sql"
-FILES_BACKUP_FILE="hsananalysis_files_${DATE}.tar.gz"
-FULL_BACKUP_FILE="hsananalysis_full_${DATE}.tar.gz"
+DB_BACKUP_FILE="apbdanalysis2026_db_${DATE}.sql"
+FILES_BACKUP_FILE="apbdanalysis2026_files_${DATE}.tar.gz"
+FULL_BACKUP_FILE="apbdanalysis2026_full_${DATE}.tar.gz"
 
 # Create backup directory if it doesn't exist
 mkdir -p "$BACKUP_DIR"
@@ -60,7 +60,7 @@ backup_database() {
     fi
     
     # Get database credentials from environment
-    DB_NAME=${DB_DATABASE:-hsananalysis_dev}
+    DB_NAME=${DB_DATABASE:-apbdanalysis2026_dev}
     DB_USER=${DB_USERNAME:-root}
     DB_PASS=${DB_PASSWORD:-password}
     
@@ -134,7 +134,7 @@ create_full_backup() {
 cleanup_old_backups() {
     print_status "Cleaning up old backups (keeping last 7 days)..."
     
-    find "$BACKUP_DIR" -name "hsananalysis_*.tar.gz" -type f -mtime +7 -delete
+    find "$BACKUP_DIR" -name "apbdanalysis2026_*.tar.gz" -type f -mtime +7 -delete
     
     print_success "Old backups cleaned up"
 }

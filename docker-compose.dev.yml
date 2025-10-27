@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   # FrankenPHP Application (Development)
   app:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: hsananalysis_app_dev
+    container_name: apbdanalysis2026_app_dev
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -16,18 +14,20 @@ services:
       - ./docker/supervisor/supervisord-dev.conf:/etc/supervisor/conf.d/supervisord.conf
       - nginx_upload_temp:/tmp/nginx_upload
     ports:
-      - "8000:80"
+      - "5560:80"
       - "8443:443"
+      - "5173:5173"
+      - "5174:5174"
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
-      - APP_URL=http://localhost:8000
+      - APP_URL=http://localhost:5560
       - DB_CONNECTION=mysql
       - DB_HOST=mariadb
       - DB_PORT=3306
-      - DB_DATABASE=hsananalysis_dev
-      - DB_USERNAME=hsananalysis
-      - DB_PASSWORD=hsananalysis_password
+      - DB_DATABASE=apbdanalysis2026_dev
+      - DB_USERNAME=apbdanalysis2026
+      - DB_PASSWORD=apbdanalysis2026_password
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=redis_password
@@ -38,18 +38,18 @@ services:
       - mariadb
       - redis
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
   # MariaDB Database (Development)
   mariadb:
     image: mariadb:10.11
-    container_name: hsananalysis_mariadb_dev
+    container_name: apbdanalysis2026_mariadb_dev
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=root_password
-      - MYSQL_DATABASE=hsananalysis_dev
-      - MYSQL_USER=hsananalysis
-      - MYSQL_PASSWORD=hsananalysis_password
+      - MYSQL_DATABASE=apbdanalysis2026_dev
+      - MYSQL_USER=apbdanalysis2026
+      - MYSQL_PASSWORD=apbdanalysis2026_password
       - MYSQL_CHARACTER_SET_SERVER=utf8mb4
       - MYSQL_COLLATION_SERVER=utf8mb4_unicode_ci
     volumes:
@@ -59,32 +59,32 @@ services:
       - "3307:3306"
     command: --innodb-buffer-pool-size=128M --innodb-log-file-size=32M --innodb-flush-log-at-trx-commit=2
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
   # phpMyAdmin (Development)
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: hsananalysis_phpmyadmin_dev
+    container_name: apbdanalysis2026_phpmyadmin_dev
     restart: unless-stopped
     environment:
       - PMA_HOST=mariadb
       - PMA_PORT=3306
-      - PMA_USER=hsananalysis
-      - PMA_PASSWORD=hsananalysis_password
+      - PMA_USER=apbdanalysis2026
+      - PMA_PASSWORD=apbdanalysis2026_password
       - MYSQL_ROOT_PASSWORD=root_password
       - UPLOAD_LIMIT=50M
       - MEMORY_LIMIT=128M
     ports:
-      - "8081:80"
+      - "5561:80"
     depends_on:
       - mariadb
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
   # Redis Cache & Session (Development)
   redis:
     image: redis:7-alpine
-    container_name: hsananalysis_redis_dev
+    container_name: apbdanalysis2026_redis_dev
     restart: unless-stopped
     command: redis-server --requirepass redis_password --maxmemory 128mb --maxmemory-policy allkeys-lru
     volumes:
@@ -92,7 +92,7 @@ services:
     ports:
       - "6380:6379"
     networks:
-      - hsananalysis_network
+      - apbdanalysis2026_network
 
 volumes:
   mariadb_dev_data:
@@ -103,5 +103,5 @@ volumes:
     driver: local
 
 networks:
-  hsananalysis_network:
+  apbdanalysis2026_network:
     driver: bridge
