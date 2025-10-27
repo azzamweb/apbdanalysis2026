@@ -104,22 +104,23 @@ services:
     networks:
       - apbdanalysis2026_network
 
-  # Nginx Reverse Proxy (Production)
-  nginx:
-    image: nginx:alpine
-    container_name: apbdanalysis2026_nginx_prod
-    restart: unless-stopped
-    ports:
-      - "5560:80"
-      - "8443:443"
-    volumes:
-      - ./docker/nginx/nginx-proxy.conf:/etc/nginx/nginx.conf
-      - ./docker/nginx/ssl:/etc/nginx/ssl
-      - ./storage/app/public:/var/www/html/storage/app/public
-    depends_on:
-      - app
-    networks:
-      - apbdanalysis2026_network
+  # Nginx Reverse Proxy (Production) - DISABLED
+  # Service app already includes Nginx, so this service conflicts with port 5560
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: apbdanalysis2026_nginx_prod
+  #   restart: unless-stopped
+  #   ports:
+  #     - "5560:80"
+  #     - "8443:443"
+  #   volumes:
+  #     - ./docker/nginx/nginx-proxy.conf:/etc/nginx/nginx.conf
+  #     - ./docker/nginx/ssl:/etc/nginx/ssl
+  #     - ./storage/app/public:/var/www/html/storage/app/public
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - apbdanalysis2026_network
 
 # Docker Volumes
 volumes:

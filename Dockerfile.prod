@@ -2,7 +2,7 @@
 FROM php:8.2-fpm-alpine
 
 # Install system dependencies
-RUN apk add --no-cache \
+RUN apk update && apk add --no-cache \
     git \
     curl \
     zip \
@@ -19,16 +19,13 @@ RUN apk add --no-cache \
     freetype-dev \
     libjpeg-turbo-dev \
     libpng-dev \
+    icu-dev \
     nodejs \
     npm
 
-# Configure and install GD extension
+# Configure and install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql opcache zip gd
-
-# Install intl extension
-RUN apk add --no-cache icu-dev \
-    && docker-php-ext-install intl
+    && docker-php-ext-install pdo pdo_mysql opcache zip gd intl
 
 # Install redis extension
 RUN pecl install redis \
@@ -52,9 +49,9 @@ RUN mkdir -p /var/log/supervisor /run/nginx /tmp/nginx_upload
 COPY . .
 
 # Install dependencies and optimize
-RUN composer install --no-dev --optimize-autoloader --no-interaction \
+RUN composer config --global process-timeout 300 \
+    && composer install --no-dev --optimize-autoloader --no-interaction \
     && php artisan config:cache \
-    && php artisan route:cache \
     && php artisan view:cache
 
 # Set permissions
