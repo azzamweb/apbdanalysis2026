@@ -95,6 +95,10 @@ yarn.lock
 dist/
 build/
 
+# Exception: Allow vendor assets (AOS, etc) in public/assets
+!public/assets/**/dist/
+!public/assets/**/build/
+
 # Database
 *.sqlite
 *.db
