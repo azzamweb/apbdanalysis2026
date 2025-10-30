@@ -31,8 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('tahapan', TahapanController::class);
 
     //Data Anggaran
-    Route::resource('data-anggaran', DataAnggaranController::class);
-    Route::delete('data-anggaran/{tahapan_id}/{tanggal_upload}/{jam_upload}', [DataAnggaranController::class, 'destroy'])->name('data-anggaran.destroy-by-params');
+    Route::resource('data-anggaran', DataAnggaranController::class)->except(['destroy']);
+    Route::delete('data-anggaran/{tahapan_id}/{tanggal_upload}/{jam_upload}', [DataAnggaranController::class, 'destroy'])->name('data-anggaran.destroy');
     Route::get('/data-anggaran', [DataAnggaranController::class, 'index'])->name('data');
     Route::post('/data-anggaran/upload', [DataAnggaranController::class, 'upload'])->name('data-anggaran.upload');   
 
