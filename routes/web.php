@@ -109,7 +109,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/simulasi/updatepersentasesubkeg', [SimulasiController::class, 'updatePersentaseSubkeg'])->name('simulasi.updatepersentasesubkeg');
 
         Route::post('/simulasi/update-persentase-subkeg', [SimulasiController::class, 'updatePersentasesubkeg'])
-        ->name('simulasi.updatepersentasesubkeg');
+        ->name('simulasi.updatepersentasesubkegv2');
 
 
 
