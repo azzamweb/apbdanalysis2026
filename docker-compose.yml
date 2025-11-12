@@ -120,7 +120,7 @@ services:
   queue:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: apbdanalysis2026_queue
     restart: unless-stopped
     working_dir: /var/www/html
@@ -150,7 +150,7 @@ services:
   scheduler:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: apbdanalysis2026_scheduler
     restart: unless-stopped
     working_dir: /var/www/html
