@@ -98,7 +98,13 @@ Lengkapi variabel penting di `.env`:
 
 2. Salin `production.env.example` menjadi `.env`, lalu isi nilai produksi (`APP_URL`, kredensial DB/Redis eksternal, dsb.).
 
-3. Jalankan skrip deploy:
+3. Pastikan `APP_KEY` terisi di `.env` sebelum kontainer berjalan. Jika belum:
+   ```bash
+   docker compose -f docker-compose.prod.yml run --rm app php artisan key:generate --show
+   ```
+   Salin output `base64:...` lalu tempelkan ke baris `APP_KEY=` di `.env`.
+
+4. Jalankan skrip deploy:
    ```bash
    chmod +x deploy-to-production.sh
    ./deploy-to-production.sh
@@ -110,11 +116,46 @@ Lengkapi variabel penting di `.env`:
    - Menjalankan `php artisan migrate --force`
    - Membangun ulang cache & memverifikasi health
 
-4. **Endpoint default**
+5. **Endpoint default**
    - Aplikasi: `http://<IP-server>:5560` (gunakan reverse proxy atau map port 80/443 sesuai kebutuhan)
    - phpMyAdmin: `http://<IP-server>:5561`
 
-### 4.3. Operasional Rutin
+### 4.3. Integrasi Reverse Proxy / CDN
+- **DNS**: arahkan `analysis.trust-idn.id` (contoh) ke IP publik server.
+- **Reverse proxy host** (mis. Nginx):
+  ```nginx
+  server {
+      listen 80;
+      server_name analysis.trust-idn.id;
+
+      location / {
+          proxy_pass http://127.0.0.1:5560;
+          include proxy_params;
+      }
+  }
+
+  server {
+      listen 443 ssl;
+      server_name analysis.trust-idn.id;
+
+      ssl_certificate /etc/letsencrypt/live/analysis.trust-idn.id/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/analysis.trust-idn.id/privkey.pem;
+
+      location / {
+          proxy_pass http://127.0.0.1:5560;
+          include proxy_params;
+      }
+  }
+  ```
+- **Firewall**: buka port 80 & 443 (`ufw allow 80 && ufw allow 443`).
+- **Cloudflare / CDN**: gunakan mode SSL `Full` atau `Full (strict)` sesuai sertifikat origin.
+- Perbarui `APP_URL=https://analysis.trust-idn.id`, kemudian:
+  ```bash
+  docker exec apbdanalysis2026_app_prod php artisan config:clear
+  docker exec apbdanalysis2026_app_prod php artisan config:cache
+  ```
+
+### 4.4. Operasional Rutin
 ```bash
 # Status kontainer
 docker compose -f docker-compose.prod.yml ps
@@ -136,11 +177,12 @@ docker compose -f docker-compose.prod.yml exec app php artisan optimize
 
 | Gejala | Solusi |
 | --- | --- |
-| `No application encryption key has been specified.` | Jalankan `php artisan key:generate` di dalam kontainer aplikasi. |
+| `No application encryption key has been specified.` | Generate key dengan `php artisan key:generate --show`, tempelkan ke `.env`, restart kontainer. |
 | Tidak bisa konek DB/Redis | Pastikan `DB_HOST` & `REDIS_HOST` sesuai jaringan Docker, jalankan `docker compose ... ps` untuk memastikan kontainer hidup. |
 | Perubahan kode tidak terlihat | Karena volume ter-mount, pastikan file tersimpan. Jika perlu rebuild aset: `npm run build`. |
 | Artisan error karena dependency | Pastikan `composer install` & `npm install` dijalankan di kontainer setelah build awal. |
 | Gagal deploy karena cache rute | Jalankan `php artisan route:clear` dan pastikan tidak ada nama rute duplikat sebelum `route:cache`. |
+| Domain via Cloudflare menampilkan 523 | Pastikan DNS menunjuk ke IP origin, port 80/443 terbuka, dan reverse proxy meneruskan ke `127.0.0.1:5560`. |
 
 ---
 

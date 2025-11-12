@@ -135,10 +135,11 @@ Backup/restore tersedia via `deploy-to-production.sh` dan perintah Docker standa
 
 | Masalah | Solusi |
 | --- | --- |
-| `No application encryption key has been specified.` | Jalankan `php artisan key:generate` di dalam kontainer `app`. |
+| `No application encryption key has been specified.` | `php artisan key:generate --show`, tempelkan ke `.env`, restart kontainer & rebuild cache. |
 | Koneksi DB/Redis gagal | Pastikan kontainer `mariadb`/`redis` berjalan, cek `DB_HOST` & `REDIS_HOST`. |
 | Cache rute gagal | Jalankan `php artisan route:clear` sebelum `route:cache`; pastikan nama rute unik. |
 | Perubahan kode tidak muncul | Pastikan volume tersimpan dan rebuild aset (`npm run build` / `npm run dev`). |
+| Domain via Cloudflare 523 | DNS harus ke IP origin, buka port 80/443, siapkan reverse proxy ke `127.0.0.1:5560`. |
 
 ## 🤝 Kontribusi
 
