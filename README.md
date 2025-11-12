@@ -1,425 +1,157 @@
-# APBD Analysis 2026 - Aplikasi Pengolah Data APBD
+# APBD Analysis 2026
 
-Aplikasi Laravel untuk pengolahan data APBD (Anggaran Pendapatan dan Belanja Daerah) dengan fitur upload, analisis, dan pelaporan data anggaran. Versi 2026 dengan konfigurasi Docker yang telah dioptimalkan untuk upload file besar dan deployment production.
+Laravel-based APBD (regional budget) analytics platform with Docker-first workflow for development and production.
 
-## 🚀 Quick Start
-
-### Development Environment
+## 🚀 Quick Start (Docker)
 
 ```bash
 # Clone repository
 git clone https://github.com/azzamweb/apbdanalysis2026.git
 cd apbdanalysis2026
 
-# Setup development environment
-make setup
-
-# Start development server (basic)
-make dev
-
-# Start development server with Vite (recommended)
-make dev-vite
-
-# Access application
-open http://localhost:5560
-```
-
-### Production Environment
-
-```bash
-# Setup production environment
-make setup-prod
-
-# Deploy to production
-make prod
-
-# Access application
-open https://localhost
-```
-
-## 📋 Prerequisites
-
-- Docker & Docker Compose
-- Git
-- 2GB+ RAM
-- 20GB+ Storage
-
-## 🛠️ Technology Stack
-
-- **Backend**: Laravel 11.x
-- **Database**: MariaDB 10.11
-- **Cache/Session**: Redis 7
-- **Web Server**: Nginx + PHP-FPM 8.2
-- **Containerization**: Docker & Docker Compose
-- **Database Management**: phpMyAdmin
-
-## 📁 Project Structure
-
-```
-hsananalysis/
-├── app/                    # Laravel application code
-├── database/              # Database migrations & seeders
-├── docker/                # Docker configurations
-│   ├── nginx/            # Nginx configurations
-│   ├── php/              # PHP configurations
-│   ├── mysql/            # MariaDB configurations
-│   ├── redis/            # Redis configurations
-│   ├── supervisor/       # Supervisor configurations
-│   └── scripts/          # Deployment scripts
-├── public/               # Web accessible files
-├── resources/            # Views, assets, etc.
-├── storage/              # File storage
-├── docker-compose.yml    # Base Docker Compose
-├── docker-compose.dev.yml # Development environment
-├── docker-compose.prod.yml # Production environment
-├── Dockerfile.dev        # Development Dockerfile
-├── Dockerfile.prod       # Production Dockerfile
-├── Makefile              # Convenient commands
-└── README.md             # This file
-```
-
-## 🔧 Available Commands
-
-### Development Commands
-
-```bash
-make dev              # Start development environment
-make stop             # Stop all containers
-make logs             # View application logs
-make shell            # Access application shell
-make db-shell         # Access database shell
-make redis-shell      # Access Redis shell
-make migrate          # Run database migrations
-make seed             # Run database seeders
-make test             # Run tests
-make cache-clear      # Clear application cache
-make status           # Show container status
-```
-
-### Production Commands
-
-```bash
-make setup-prod       # Setup production environment
-make prod             # Deploy to production
-make logs-prod        # View production logs
-make shell-prod       # Access production shell
-make migrate-prod     # Run production migrations
-make seed-prod        # Run production seeders
-make cache-clear-prod # Clear production cache
-make optimize         # Optimize application
-make status-prod      # Show production status
-```
-
-### Backup Commands
-
-```bash
-make backup           # Create backup
-make restore          # Restore from backup
-```
-
-## 🌐 Access URLs
-
-### Development
-- **Application**: http://localhost:8000
-- **phpMyAdmin**: http://localhost:8081
-- **Database**: localhost:3307
-- **Redis**: localhost:6380
-
-### Production
-- **Application**: https://localhost (or your domain)
-- **phpMyAdmin**: http://localhost:5561
-- **Database**: localhost:3306
-- **Redis**: localhost:6379
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Copy the appropriate environment file:
-
-```bash
-# Development
+# Copy environment file
 cp .env.example .env
 
-# Production
-cp production.env.example .env
-```
+# Start development stack
+docker compose -f docker-compose.dev.yml up -d --build
 
-Key environment variables:
+# Install dependencies & prepare app (run inside container)
+docker compose -f docker-compose.dev.yml exec app sh
+composer install
+npm install
+php artisan key:generate
+php artisan migrate --seed
+npm run build    # atau npm run dev
+exit
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `APP_ENV` | Environment | `local` / `production` |
-| `APP_DEBUG` | Debug mode | `true` / `false` |
-| `APP_URL` | Application URL | `http://localhost:8000` |
-| `DB_DATABASE` | Database name | `hsananalysis_dev` |
-| `DB_USERNAME` | Database user | `root` |
-| `DB_PASSWORD` | Database password | `password` |
-| `REDIS_PASSWORD` | Redis password | `redis_password` |
-
-### SSL Certificates (Production)
-
-For production, you need SSL certificates:
-
-```bash
-# Self-signed (testing)
-make setup-prod
-
-# Let's Encrypt (production)
-sudo certbot certonly --standalone -d yourdomain.com
-sudo cp /etc/letsencrypt/live/yourdomain.com/fullchain.pem docker/nginx/ssl/cert.pem
-sudo cp /etc/letsencrypt/live/yourdomain.com/privkey.pem docker/nginx/ssl/key.pem
-```
-
-## 🗄️ Database
-
-### Migrations
-
-```bash
-# Development
-make migrate
-
-# Production
-make migrate-prod
-```
-
-### Seeders
-
-```bash
-# Development
-make seed
-
-# Production
-make seed-prod
-```
-
-### Backup & Restore
-
-```bash
-# Create backup
-make backup
-
-# Restore from backup
-make restore BACKUP_FILE=hsananalysis_full_20240101_120000.tar.gz
-```
-
-## 🔒 Security Features
-
-- **SSL/TLS**: HTTPS encryption
-- **Security Headers**: XSS, CSRF protection
-- **Rate Limiting**: API and login protection
-- **Password Protection**: Redis and database
-- **Input Validation**: Laravel validation
-- **SQL Injection Protection**: PDO prepared statements
-
-## 📊 Performance Optimizations
-
-### Development
-- **OPcache**: Disabled for development
-- **Debug Mode**: Enabled
-- **Logging**: Verbose logging
-
-### Production
-- **OPcache**: Enabled with optimization
-- **Debug Mode**: Disabled
-- **Caching**: Redis for sessions and cache
-- **Compression**: Gzip enabled
-- **Static Files**: Long-term caching
-- **Database**: Optimized MariaDB settings
-
-## 🐳 Docker Services
-
-### Development Services
-- **app**: PHP-FPM + Nginx (port 8000)
-- **mariadb**: MariaDB database (port 3307)
-- **redis**: Redis cache (port 6380)
-- **phpmyadmin**: Database management (port 8081)
-
-### Production Services
-- **app**: PHP-FPM + Nginx (port 80/443)
-- **mariadb**: MariaDB database (port 3306)
-- **redis**: Redis cache (port 6379)
-- **phpmyadmin**: Database management (port 5561)
-- **nginx**: Reverse proxy with SSL
-
-## 📝 Logs
-
-### View Logs
-
-```bash
-# Development
-make logs
-
-# Production
-make logs-prod
-
-# Specific service
-docker-compose -f docker-compose.dev.yml logs mariadb
-```
-
-### Log Locations
-
-- **Application**: Laravel logs in `storage/logs/`
-- **Nginx**: `/var/log/nginx/`
-- **PHP**: `/var/log/php_errors.log`
-- **Database**: `/var/log/mysql/`
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### Container Won't Start
-```bash
-# Check logs
-make logs
-
-# Check status
-make status
-
-# Restart containers
-make stop && make dev
-```
-
-#### Database Connection Issues
-```bash
-# Check database status
-docker-compose -f docker-compose.dev.yml ps mariadb
-
-# Test connection
-make db-shell
-
-# Check environment variables
-cat .env | grep DB_
-```
-
-#### Permission Issues
-```bash
-# Fix storage permissions
-docker-compose -f docker-compose.dev.yml exec app chown -R www-data:www-data storage
-docker-compose -f docker-compose.dev.yml exec app chmod -R 755 storage
-```
-
-#### SSL Certificate Issues
-```bash
-# Regenerate self-signed certificates
-rm docker/nginx/ssl/*
-make setup-prod
-```
-
-### Performance Issues
-
-1. **Check resource usage**: `docker stats`
-2. **Review slow queries**: Check MariaDB slow query log
-3. **Optimize database**: Run `make optimize`
-4. **Clear cache**: Run `make cache-clear`
-
-## 🚀 Deployment
-
-### Development Deployment
-
-```bash
-# Initial setup
-make setup
-
-# Start development
-make dev
-
-# Run migrations
-make migrate
-
-# Access application
+# Open application
 open http://localhost:5560
 ```
 
-### Production Deployment
+Panduan lengkap (development & production) tersedia di [`INSTALLATION.md`](INSTALLATION.md).
 
-```bash
-# Initial setup
-make setup-prod
+## 📋 Prasyarat
 
-# Configure environment
-nano .env
+- Docker 24+ & Docker Compose plugin
+- Git
+- RAM minimal 4 GB
+- Port yang tidak bentrok: `5560`, `5561`, `6380`, `3307`, `5173-5174`
 
-# Deploy to production
-make prod
+## 🛠️ Tumpukan Teknologi
 
-# Run migrations
-make migrate-prod
+- **Framework**: Laravel 11
+- **Web Server**: Nginx + PHP-FPM 8.2
+- **Database**: MariaDB 10.11
+- **Cache/Queue**: Redis 7
+- **Front-end tooling**: Vite (npm), Tailwind CSS
+- **Containerization**: Docker & Docker Compose
 
-# Access application
-open https://localhost
+## 📁 Struktur Proyek
+
+```
+apbdanalysis2026/
+├── app/                     # Kode Laravel utama
+├── database/                # Migrasi & seeder
+├── docker/                  # Konfigurasi Docker (nginx/php/mysql/redis/supervisor)
+├── public/                  # Aset publik
+├── resources/               # Blade view, JS, CSS
+├── storage/                 # File aplikasi
+├── docker-compose.dev.yml   # Stack development
+├── docker-compose.prod.yml  # Stack production
+├── Dockerfile.dev           # Image dev
+├── Dockerfile.prod          # Image production
+├── deploy-to-production.sh  # Skrip deploy otomatis
+├── INSTALLATION.md          # Panduan instalasi & deploy
+└── README.md
 ```
 
-### Automated Deployment
-
-For automated deployment, you can use the provided scripts:
+## 🔧 Perintah Utama
 
 ```bash
-# Setup script
-./docker/scripts/setup-prod.sh
+# Development lifecycle
+docker compose -f docker-compose.dev.yml up -d --build
+docker compose -f docker-compose.dev.yml logs -f app
+docker compose -f docker-compose.dev.yml exec app sh
+docker compose -f docker-compose.dev.yml down
 
-# Deploy script
-./docker/scripts/deploy.sh
-
-# Backup script
-./docker/scripts/backup.sh
+# Production lifecycle
+./deploy-to-production.sh
+docker compose -f docker-compose.prod.yml logs -f app
+docker compose -f docker-compose.prod.yml exec app sh
+docker compose -f docker-compose.prod.yml down
 ```
 
-## 📚 Documentation
+## 🌐 Endpoint Default
 
-- [Production Deployment Guide](PRODUCTION.md)
-- [Docker Configuration](DOCKER.md)
-- [Laravel Documentation](https://laravel.com/docs)
+### Development
+- Aplikasi: http://localhost:5560
+- phpMyAdmin: http://localhost:5561 (user `apbdanalysis2026`, password `apbdanalysis2026_password`)
+- MariaDB (host): `localhost:3307`
+- Redis (host): `localhost:6380`
 
-## 🤝 Contributing
+### Production (mapping standar)
+- Aplikasi: http://\<server-ip\>:5560 (mapping ke 80/443 dapat disesuaikan)
+- phpMyAdmin: http://\<server-ip\>:5561
+- MariaDB (host): `localhost:3307`
+- Redis (host): `localhost:6380`
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-For support and questions:
-
-1. Check this README
-2. Review the documentation
-3. Check GitHub issues
-4. Contact the development team
-
-## 🔄 Updates
-
-### Application Updates
+## ⚙️ Konfigurasi Lingkungan
 
 ```bash
-# Pull latest changes
-git pull
-
-# Rebuild containers
-make dev  # or make prod
-
-# Run migrations
-make migrate  # or make migrate-prod
-
-# Clear cache
-make cache-clear  # or make cache-clear-prod
+cp .env.example .env             # Development / staging
+cp production.env.example .env   # Production (di server)
 ```
 
-### System Updates
+Isi variabel penting sesuai panduan di [`INSTALLATION.md`](INSTALLATION.md). Setelah mengubah `.env`, jalankan:
 
 ```bash
-# Update Docker
-sudo apt update && sudo apt upgrade docker.io
-
-# Update system
-sudo apt update && sudo apt upgrade
+docker compose -f docker-compose.dev.yml exec app php artisan config:clear
+docker compose -f docker-compose.dev.yml exec app php artisan cache:clear
 ```
+
+## 🗄️ Database & Migrasi
+
+```bash
+# Development
+docker compose -f docker-compose.dev.yml exec app php artisan migrate
+docker compose -f docker-compose.dev.yml exec app php artisan db:seed
+
+# Production
+docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
+docker compose -f docker-compose.prod.yml exec app php artisan db:seed --force
+```
+
+Backup/restore tersedia via `deploy-to-production.sh` dan perintah Docker standar.
+
+## 🔒 Keamanan & Performa
+
+- SSL/TLS siap untuk Let’s Encrypt (lihat `INSTALLATION.md`)
+- Security headers & rate limiting terkonfigurasi di Nginx
+- Redis digunakan untuk cache, queue, dan session
+- OPcache aktif di production, nonaktif di development
+- Upload besar (hingga 500 MB) didukung lewat konfigurasi PHP/Nginx
+
+## 📝 Troubleshooting Singkat
+
+| Masalah | Solusi |
+| --- | --- |
+| `No application encryption key has been specified.` | Jalankan `php artisan key:generate` di dalam kontainer `app`. |
+| Koneksi DB/Redis gagal | Pastikan kontainer `mariadb`/`redis` berjalan, cek `DB_HOST` & `REDIS_HOST`. |
+| Cache rute gagal | Jalankan `php artisan route:clear` sebelum `route:cache`; pastikan nama rute unik. |
+| Perubahan kode tidak muncul | Pastikan volume tersimpan dan rebuild aset (`npm run build` / `npm run dev`). |
+
+## 🤝 Kontribusi
+
+1. Fork repository
+2. Buat branch fitur
+3. Lakukan perubahan & tambahkan tes bila perlu
+4. Pastikan `docker compose ... exec app php artisan test` lulus
+5. Ajukan pull request
+
+## 📄 Lisensi
+
+Proyek ini berada di bawah lisensi MIT.
 
 ---
 
-**Happy Coding! 🎉**
+**Happy coding!** 🎉
