@@ -2,17 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
-class DataAnggaranSeeder extends Seeder
+class DatabaseSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
     {
-       
+        // Contoh:
+        // $this->call(DataAnggaranSeeder::class);
     }
 }
